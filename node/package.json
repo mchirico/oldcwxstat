@@ -1,0 +1,40 @@
+{
+  "name": "cwxstat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc mocha",
+    "testw": "mocha -w",
+    "coverage": "nyc report --reporter=text-lcov |codecov --pipe -t ${CODECOV_TOKEN}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mchirico/cwxstat.git"
+  },
+  "author": "Mike Chirico",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "chi": "0.0.10",
+    "codecov": "^3.6.5",
+    "mocha": "^7.1.0",
+    "nyc": "^15.0.0",
+    "sinon": "^9.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/mchirico/cwxstat/issues"
+  },
+  "homepage": "https://github.com/mchirico/cwxstat#readme",
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "cookie-parser": "^1.4.4",
+    "csurf": "^1.11.0",
+    "express": "^4.17.1",
+    "firebase": "^7.9.3",
+    "firebase-admin": "^8.9.2",
+    "request": "^2.88.2",
+    "socket.io": "^2.3.0"
+  }
+}

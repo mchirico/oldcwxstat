@@ -1,0 +1,93 @@
+name: Cloud Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    # Setup gcloud CLI
+    - uses: mchirico/gcp-actions@v1
+      with:
+        version: 'latest'
+        service_account_key: ${{ secrets.OWNER }}
+
+    # Configure docker to use the gcloud command-line tool as a credential helper
+    - run: |
+        # Set up docker to authenticate
+        # via gcloud command-line tool.
+        gcloud auth configure-docker
+        gcloud components update --quiet
+
+
+    - name: Install ChromeDriver
+      run: |
+        CHROME_VERSION=$(google-chrome --version | cut -f 3 -d ' ' | cut -d '.' -f 1) \
+          && CHROMEDRIVER_RELEASE=$(curl --location --fail --retry 3 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}) \
+          && curl --silent --show-error --location --fail --retry 3 --output /tmp/chromedriver_linux64.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_RELEASE/chromedriver_linux64.zip" \
+          && cd /tmp \
+          && unzip chromedriver_linux64.zip \
+          && rm -rf chromedriver_linux64.zip \
+          && sudo mv chromedriver /usr/local/bin/chromedriver \
+          && sudo chmod +x /usr/local/bin/chromedriver \
+          && chromedriver --version
+
+
+    # ng command for Angular
+    - run: |
+         npm install -g @angular/cli
+
+    # Install and Decrypt files..
+    - run: |
+         cd cwxstat-app
+         npm install
+         npm run test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadlessCI
+      env:
+        CI: true
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+
+    # Node
+    - run: |
+        echo "Node Project.."
+        cd node
+        make
+
+
+    - run: |
+        gcloud config set gcloudignore/enabled false --project cwxstat-23
+        cd cwxstat-app
+        yes no|ng build --outputPath=../node/dist --prod  --outputHashing=all
+        # Must be in directory with Dockerfile
+        cd ../node
+        gcloud builds submit --tag gcr.io/cwxstat-23/cwxstatcloud --project cwxstat-23 --timeout 35m23s
+        gcloud run deploy cwxstatcloud --image gcr.io/cwxstat-23/cwxstatcloud \
+              --platform managed --allow-unauthenticated --project cwxstat-23 \
+              --region us-east1 --port 3000 --max-instances 3  --memory 128Mi
+
+
+    # BigQuery
+    - name: Working with BigQuery
+      run: |
+       txt="master push cwxstat "
+       bq query --nouse_legacy_sql 'CREATE TABLE IF NOT EXISTS  `cwxstat-23.github.log` (msg string, timeEnter timestamp);'
+       bq query --nouse_legacy_sql  --parameter=MSG:STRING:"${txt}"  'insert into `cwxstat-23.github.log` (msg,timeEnter) values (@MSG,CURRENT_TIMESTAMP())'
+
+
+
+
