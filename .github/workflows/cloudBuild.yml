@@ -52,21 +52,34 @@ jobs:
     - run: |
          npm install -g @angular/cli
 
+
     # Install and Decrypt files..
     - run: |
          cd cwxstat-app
          npm install
          npm run test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadlessCI
+         npm run coverage
       env:
         CI: true
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 
-    # Node
+    # Node Make
     - run: |
-        echo "Node Project.."
+        echo "Node Project Make"
         cd node
         make
+
+
+    # Node Coverage
+    - run: |
+        echo "Node Project coverage"
+        cd node
+        npm install
+        npm run coverage
+      env:
+        CI: true
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 
     - run: |

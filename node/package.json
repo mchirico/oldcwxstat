@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "pretest": "./node_modules/.bin/eslint src/*.js",
-    "test": "nyc mocha",
+    "test": "./node_modules/.bin/nyc mocha",
     "testw": "mocha -w",
-    "coverage": "nyc report --reporter=text-lcov |codecov --pipe -t ${CODECOV_TOKEN}"
+    "coverage": "./node_modules/.bin/nyc  --reporter=lcov --reporter=text --reporter=text-summary mocha -- --timeout=3000 test/**/*.js && codecov -p ../ -t ${CODECOV_TOKEN}"
   },
   "husky": {
-      "hooks": {
-        "pre-commit": "npm run pretest"
-      }
+    "hooks": {
+      "pre-commit": "npm run pretest"
+    }
   },
   "repository": {
     "type": "git",
