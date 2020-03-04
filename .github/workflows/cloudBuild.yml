@@ -67,6 +67,10 @@ jobs:
         echo "Node Project.."
         cd node
         make
+        npm run coverage
+      env:
+        CI: true
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 
     - run: |
