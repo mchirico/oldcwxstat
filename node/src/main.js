@@ -82,9 +82,6 @@ app.get("/chat", function(req, res) {
   res.sendFile(chatIndex);
 });
 
-app.get("/example/a", function(req, res) {
-  addTank.addThing(req, res, "Works!");
-});
 
 let count = 0;
 io.on("connection", socket => {
