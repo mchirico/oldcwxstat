@@ -3,6 +3,7 @@ name: Cloud Build
 on:
   push:
     branches:
+      - navbar
       - master
 
 jobs:
@@ -53,7 +54,14 @@ jobs:
          npm install -g @angular/cli
 
 
-    # Install and Decrypt files..
+
+    # Get credentials
+    - name: Credentials
+      run: |
+       gsutil cp gs://cwxstat-cwxstat/credentials/cwxstat-23-firebase.json ./node/credentials/cwxstat-23-firebase.json
+
+
+    # Install
     - run: |
          cd cwxstat-app
          npm install
