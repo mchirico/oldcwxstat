@@ -43,7 +43,8 @@ jspm_packages/
 credentials/tracker-184b3-firebase.json
 credentials/*.json
 credentials/*.js
-
+*/credentials/*.json
+*/credentials/*.js
 # TypeScript v1 declaration files
 typings/
 
