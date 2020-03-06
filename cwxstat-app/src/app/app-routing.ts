@@ -20,14 +20,11 @@ const appRoutes: Routes = [
   { path: 'three', component: ThreeComponent},
   { path: 'auth', component: AuthComponent}
 
-
-
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(appRoutes)],
   exports: [RouterModule]
-
 
 })
 export class AppRoutingModule {

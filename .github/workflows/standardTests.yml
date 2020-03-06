@@ -1,10 +1,7 @@
 name: Cloud Build
 
-on:
-  push:
-    branches:
-      - b
-      - master
+on: [push]
+
 
 jobs:
   build:
@@ -90,22 +87,10 @@ jobs:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 
-    - run: |
-        gcloud config set gcloudignore/enabled false --project cwxstat-23
-        cd cwxstat-app
-        yes no|ng build --outputPath=../node/dist --prod  --outputHashing=all
-        # Must be in directory with Dockerfile
-        cd ../node
-        gcloud builds submit --tag gcr.io/cwxstat-23/cwxstatcloud --project cwxstat-23 --timeout 35m23s
-        gcloud run deploy cwxstatcloud --image gcr.io/cwxstat-23/cwxstatcloud \
-              --platform managed --allow-unauthenticated --project cwxstat-23 \
-              --region us-east1 --port 3000 --max-instances 3  --memory 128Mi
-
-
     # BigQuery
     - name: Working with BigQuery
       run: |
-       txt="master push cwxstat "
+       txt="Testing pull request only"
        bq query --nouse_legacy_sql 'CREATE TABLE IF NOT EXISTS  `cwxstat-23.github.log` (msg string, timeEnter timestamp);'
        bq query --nouse_legacy_sql  --parameter=MSG:STRING:"${txt}"  'insert into `cwxstat-23.github.log` (msg,timeEnter) values (@MSG,CURRENT_TIMESTAMP())'
 
