@@ -16,6 +16,7 @@ import { SearchComponent } from './navpages/search/search.component';
 import { StartComponent } from './navpages/two/start/start.component';
 import { DetailComponent } from './navpages/two/detail/detail.component';
 import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
+import { HighlightDirective } from './shared/highlight/highlight.directive';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinne
     SearchComponent,
     StartComponent,
     DetailComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    HighlightDirective
   ],
   imports: [
     BrowserModule,
